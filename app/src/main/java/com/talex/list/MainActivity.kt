@@ -1,46 +1,38 @@
 package com.talex.list
 
-import androidx.appcompat.app.AppCompatActivity
+import android.annotation.SuppressLint
 import android.os.Bundle
-import android.view.View
-import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-
-import android.view.LayoutInflater
 
 
 class MainActivity : AppCompatActivity() {
+
+    val viewModel = MainViewModel()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
-        recyclerView.adapter = RecyclerView.Adapter
-
-    }
-}
-
-class MyAdapter : RecyclerView.Adapter<MyViewHolder>() {
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
-        val inflater = LayoutInflater.from(parent.getContext())
-        val holder = MyViewHolder(
-            inflater.inflate(R.layout.item_my_item, parent, false)
-        )
-        return holder
-    }
-
-    override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
+        recyclerView.adapter = MyAdapter()
+        recyclerView.layoutManager = LinearLayoutManager(applicationContext)
 
     }
 
-    override fun getItemCount(): Int {
-
+    @SuppressLint("NotifyDataSetChanged")
+    override fun onResume() {
+        super.onResume()
+        viewModel.items.observe(this, {
+            findViewById<RecyclerView>(R.id.recyclerView).apply {
+                (adapter as MyAdapter).items = it
+                (adapter as MyAdapter).notifyDataSetChanged()
+            }
+        })
     }
 
 }
 
 
-class MyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-
-
-}
